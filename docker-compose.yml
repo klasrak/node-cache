@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: mongo-container
+    image: 'mongo:3'
+    restart: always
+    volumes:
+      - ./.data:/data/db
+    ports:
+      - '27017:27017'
+
+  cache:
+    container_name: redis-container
+    image: 'redis'
+    restart: always
+    volumes:
+      - ./.data:/data/cache
+    ports:
+      - '6379:6379'
+
+  api:
+    container_name: api-container
+    build: .
+    image: node-cache-api
+    restart: always
+    command: npm start
+    volumes:
+      - .:/usr/src/api
+    ports:
+      - '3000:3000'
+    links:
+      - cache
+      - mongo
